@@ -1,0 +1,131 @@
+*{
+    margin: 0;
+}
+
+.wrapper{
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    height: 500px;
+}
+
+.board{
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+}
+
+.pos{
+    width: 50px;
+    height: 50px;
+    float: left;
+    border: 0px;
+    display: inline-block;
+}
+
+.unitsDisplay{
+    width: 250px;
+    height: 800px;
+    background-color: aqua;
+    margin: 20px;
+    float: left;
+    display: inline-block;
+}
+
+.pair{
+    background-color: red;
+}
+
+.impair{
+    background-color: green;
+}
+
+.walkable{
+
+}
+
+.noWalkable{
+
+}
+
+.unit{
+    width: 50px;
+    height: 50px;
+    float: left;
+    background-color: black;
+}
+
+.margin{
+    margin: 5px;
+}
+
+.no-margin{
+    margin: 0;
+}
+
+.unitbg{
+    width:45px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-size: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.scout .unitbg{
+    background-image: url("assets/scout.jpg");
+}
+
+.bomb .unitbg{
+    background-image: url("assets/bomb.jpg");
+}
+
+.deminer .unitbg{
+    background-image: url("assets/deminer.jpg");
+}
+
+.sergeant .unitbg{
+    background-image: url("assets/sergeant.jpg");
+}
+
+.lieutenant .unitbg{
+    background-image: url("assets/lieutenant.jpg");
+    
+}
+
+.captain .unitbg{
+    background-image: url("assets/captain.jpg");
+    
+}
+
+.commander .unitbg{
+    background-image: url("assets/commander.jpg");
+    
+}
+
+.colonel .unitbg{
+    background-image: url("assets/colonel.jpg");
+    
+}
+
+.general .unitbg{
+    background-image: url("assets/general.jpg");
+    
+}
+
+.marshall .unitbg{
+    background-image: url("assets/marshall.jpg");
+    
+}
+
+.spy .unitbg{
+    background-image: url("assets/spy.jpg");
+    
+}
+
+.flag .unitbg{
+    background-image: url("assets/flag.jpg");
+    
+}
