@@ -1,11 +1,11 @@
 window.onload = function(){
 
 //TODO
-    //3déplacement des pions
-    //4gestion du tour
-    //5gestion diff factions
+    //3déplacement des pions, gestion des attaques
+    //4gestion du tour (fin d'event, retournenement du board)
+    //5gestion 2 factions
     //6 choix VS ou solo
-    //création IA
+    //création IA LOL
     createBoard();
     //initializing units
     initUnit(8, "scout");
@@ -22,26 +22,35 @@ window.onload = function(){
     initUnit(1, "flag");
 
     //initialization Dragging
-    $(".unit").draggable({ snap: ".pos"});
-
-    //gestion Dropping
-    $(".pos").droppable({
-        accept: '.unit',
-        drop: function(event, ui) {
-            $(ui.draggable).removeClass("margin");
-            $(ui.draggable).addClass("no-margin");
-            $(this).append(ui.draggable);
-            $(ui.draggable).css("top", 0);
-            $(ui.draggable).css("left", 0);
+    $(".unit").draggable({
+        snap: ".pos",
+        revert : function(event, ui) {
+            //Si l'element est draggé en zone non autorisé, retour emplacement d'origine
+            $(this).data("ui-draggable").originalPosition = {
+                top : 0,
+                left : 0
+            };
+            return !event;
         }
     });
-    $(".draggable").draggable();
 
-    $(".end-drag").click(function(){
-        $(".unit").draggable({ cancel: ".unit"});
-        var test = $(".board .unit");
+    //Limitation Zone Drop
 
-    })
+    function setDropZone(div, posX){
+        if(posX >= 6 && posX <= 9){
+            $(div).droppable({
+                accept: '.unit',
+                drop: function(event, ui) {
+                    $(ui.draggable).removeClass("margin");
+                    $(ui.draggable).addClass("no-margin");
+                    $(this).append(ui.draggable);
+                    //reset placement
+                    $(ui.draggable).css("top", 0);
+                    $(ui.draggable).css("left", 0);
+                }
+            });
+        }
+    }
 
     // création du plateau
     function createBoard(){
@@ -62,6 +71,7 @@ window.onload = function(){
                     }
                 }
                 $(".board").append(div);
+                setDropZone(div, x);
             }
         }
     }
@@ -79,10 +89,4 @@ window.onload = function(){
             $(mainDiv).append(bgDiv);
         }
     }
-
-    //init
-    function placeUnit(){
-
-    }
-
 }
