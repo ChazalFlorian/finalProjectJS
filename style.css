@@ -101,19 +101,35 @@
 }
 
 /* with classes name starting with a number, you need to use the UTF-8 code for that number to make it works*/
-.pos.\34.\32{
+.pos.x4.y2{
     background-image:url("assets/Water.jpg");
 }
 
-.pos.\34.\33{
+.pos.x4.y3{
     background-image:url("assets/Water.jpg");
 }
 
-.pos.\35.\32{
+.pos.x5.y2{
     background-image:url("assets/Water.jpg");
 }
 
-.pos.\35.\33{
+.pos.x5.y3{
+    background-image:url("assets/Water.jpg");
+}
+
+.pos.x4.y6{
+    background-image:url("assets/Water.jpg");
+}
+
+.pos.x4.y7{
+    background-image:url("assets/Water.jpg");
+}
+
+.pos.x5.y6{
+    background-image:url("assets/Water.jpg");
+}
+
+.pos.x5.y7{
     background-image:url("assets/Water.jpg");
 }
 

@@ -226,15 +226,15 @@ window.onload = function(){
                 var div = document.createElement("div");
                 if ((x % 2) === 0) {
                     if ((y % 2) === 0) {
-                        div.className = "pos "+x+" "+y+" pair";
+                        div.className = "pos x"+x+" y"+y;
                     }else{
-                        div.className = "pos "+x+" "+y+" impair";
+                        div.className = "pos x"+x+" y"+y;
                     }
                 } else {
                     if ((y % 2) === 0) {
-                        div.className = "pos "+x+" "+y+" impair";
+                        div.className = "pos x"+x+" y"+y;
                     }else{
-                        div.className = "pos "+x+" "+y+" pair";
+                        div.className = "pos x"+x+" y"+y;
                     }
                 }
                 $(".board").append(div);
@@ -277,17 +277,32 @@ window.onload = function(){
     }
 
     function startGame(){
+        //set all cases to act as droppable
+        $(".pos").droppable({
+            accept: '.unit',
+            drop: function(event, ui) {
+                if($(this).is(":empty")){
+                    $(ui.draggable).removeClass("margin");
+                    $(ui.draggable).addClass("no-margin");
+                    $(this).append(ui.draggable);
+                    //reset placement
+                    $(ui.draggable).css("top", 0);
+                    $(ui.draggable).css("left", 0);
+                }else{
+                    $(ui.draggable).draggable({
+                        revert: true
+                    });
+                }
+            }
+        });
         //reset drag parameter
         $(".unit").draggable({cancel: true});
         $(".pos").droppable({disabled: true});
         //get unit position
         $(".unitbg").click(function () {
-            var selectedX = $(this).parent().parent().attr('class').substr(4, 1);
-            var selectedY = $(this).parent().parent().attr('class').substr(6, 1);
+            var selectedX = $(this).parent().parent().attr('class').substr(4, 2);
+            var selectedY = $(this).parent().parent().attr('class').substr(7, 2);
             var unitName = $(this).parent().attr('class');
-            var Vname1 = unitName.split(" ")[1];
-            var test = getUnitValueByName(Vname1);
-            console.log(test);
             setMoveByUnit(unitName, selectedX, selectedY);
         })
     }
@@ -295,77 +310,29 @@ window.onload = function(){
 
     //everything up has been debugged
     function setMoveByUnit(unit, X, Y){
-        X = parseInt(X);
-        Y = parseInt(Y);
         console.log(X);
         console.log(Y);
-        console.log(unit);
-        console.log("here stop init values");
-        var divname1 = ".pos."+(X - 1).toString()+"."+(Y).toString();
-        var divname2 = ".pos."+(X + 1).toString()+"."+(Y).toString();
-        var divname3 = ".pos."+(X).toString()+"."+(Y - 1).toString();
-        var divname4 = ".pos."+(X).toString()+"."+(Y + 1).toString();
-        console.log(divname1);
-        //Somehow, the X and Y values are inverted
-        var minusX = (X - 1).toString();
-        var plusX = (X + 1).toString();
-        var minusY = (Y - 1).toString();
-        var plusY = (Y + 1).toString();
-        console.log($(divname1).attr("class"));
-        console.log($(divname2).attr("class"));
-        console.log($(divname3).attr("class"));
-        console.log($(divname4).attr("class"));
-        $(".pos."+minusX+"."+(Y)).droppable({
-            accept: unit,
-            drop: function(event, ui) {
-                if($(this).is(":empty")){
-                    $(this).append(ui.draggable);
-                    //reset placement
-                    $(ui.draggable).css("top", 0);
-                    $(ui.draggable).css("left", 0);
-                }else{
-                    meetUnit(unit, $(this).child().first().attr("class"));
-                }
-            }
+        var minusX = X.substr(0, 1) + ( (X.substr(1, 1)) - 1).toString();
+        var plusX = X.substr(0, 1) + ( parseInt(X.substr(1, 1)) + 1).toString();
+        var minusY = Y.substr(0, 1) + ( (Y.substr(1, 1)) - 1).toString();
+        var plusY = Y.substr(0, 1) + ( parseInt(Y.substr(1, 1)) + 1).toString();
+        console.log(minusX);
+        console.log(plusX);
+        console.log(minusY);
+        console.log(plusY);
+        console.log($(".pos."+minusX+"."+Y).attr("class"));
+        $(".pos."+minusX+"."+Y).droppable({
+            disabled: false
         });
-        $(".pos."+plusX+"."+(Y)).droppable({
-            accept: unit,
-            drop: function(event, ui) {
-                if($(this).is(":empty")){
-                    $(this).append(ui.draggable);
-                    //reset placement
-                    $(ui.draggable).css("top", 0);
-                    $(ui.draggable).css("left", 0);
-                }else{
-                    meetUnit(unit, $(this).child().first().attr("class"));
-                }
-            }
+        console.log($(".pos."+minusX+"."+Y).attr("class"));
+        $(".pos."+plusX+"."+Y).droppable({
+            disabled: false
         })
-        $(".pos."+(X)+"."+minusY).droppable({
-            accept: unit,
-            drop: function(event, ui) {
-                if($(this).is(":empty")){
-                    $(this).append(ui.draggable);
-                    //reset placement
-                    $(ui.draggable).css("top", 0);
-                    $(ui.draggable).css("left", 0);
-                }else{
-                    meetUnit(unit, $(this).child().first().attr("class"));
-                }
-            }
+        $(".pos."+X+"."+minusY).droppable({
+            disabled: false
         })
-        $(".pos."+(X)+"."+plusY).droppable({
-            accept: unit,
-            drop: function(event, ui) {
-                if($(this).is(":empty")){
-                    $(this).append(ui.draggable);
-                    //reset placement
-                    $(ui.draggable).css("top", 0);
-                    $(ui.draggable).css("left", 0);
-                }else{
-                    meetUnit(unit, $(this).child().first().attr("class"));
-                }
-            }
+        $(".pos."+X+"."+plusY).droppable({
+            disabled: false
         })
     }
 
