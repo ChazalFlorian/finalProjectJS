@@ -2,10 +2,112 @@ window.onload = function(){
 
 //TODO
     //lancement du jeu
-    //2déplacement des pions, gestion des attaques
-    //3gestion du tour (fin d'event, retournenement du board)
+    //2 debug déplacement des pions, gestion des attaques
+    //3gestion du tour (fin d'event, masquer pions ennemies)
     //4gestion 2 factions
     //5design + joli
+
+    //set menu functions
+
+    $(".item-menu.home").click(function(){
+        $(".default").css( "display", "block");
+        $(".central .rules").css( "display", "none");
+        $(".central .contact").css( "display", "none");
+        $(".wrapper").css( "display", "none");
+    });
+    $(".item-menu.rules").click(function(){
+        $(".default").css( "display", "none");
+        $(".central .rules").css( "display", "block");
+        $(".central .contact").css( "display", "none");
+        $(".wrapper").css( "display", "none");
+    });
+    $(".item-menu.contact").click(function(){
+        $(".default").css( "display", "none");
+        $(".central .rules").css( "display", "none");
+        $(".central .contact").css( "display", "block");
+        $(".wrapper").css( "display", "none");
+    });
+    $(".item-menu.game").click(function(){
+        $(".default").css( "display", "none");
+        $(".central .rules").css( "display", "none");
+        $(".central .contact").css( "display", "none");
+        $(".wrapper").css( "display", "block");
+    });
+
+
+    //check real-time if form'passwords matches
+    $("input[name='passwordCheck']").focusout(function(){
+        console.log($(this).val());
+        console.log($("input[name='password']").val());
+        if($(this).val() != $("input[name='password']").val()){
+
+            $("#Warning").css("visibility", "visible");
+            $("#Warning").text("Les mots de passes ne correspondent pas.");
+        }else{
+            $("#Warning").css("visibility", "hidden");
+        }
+    })
+
+    //check contact form datas
+
+    function checkForm(){
+        var form = document.forms['form'],
+            checkRadio = false,
+            retour = true,
+            errorMsg = "";
+        //check nickname length
+        if (form.elements['nickname'].value.length > 4) {
+
+        }else{
+            retour = false;
+            errorMsg += "Nickname trop court! 4 caractères min.<br>";
+        }
+
+        if (form.elements['password'].value.length > 6) {
+
+        }else{
+            retour = false;
+            errorMsg += "Password trop court! 6 caractères min.<br>";
+        }
+
+        if (form.elements['password'].value === form.elements['password_check'].value) {
+
+        }else{
+            retour = false;
+            errorMsg += "Les Password ne matchent pas<br>";
+        }
+
+        if (form.elements['age'].value.length !== 0 && isNaN(form.elements['age'].value) === false) {
+
+        }else{
+            retour = false;
+            errorMsg += "L'age rentrée n'est pas valide<br>";
+        }
+
+        for (var i = 4; i < 8; i++) {
+            if (form.elements[i].checked == true) {
+                checkRadio = true;
+            };
+        };
+
+        if (checkRadio == false) {
+            retour = false;
+            errorMsg += "Aucune ville cochée!<br>";
+        }
+
+        // traitement renvoi
+        if (errorMsg.length > 0) {
+            document.getElementById('Warning').style.visibility= 'visible';
+            document.getElementById('Warning').innerHTML = errorMsg;
+        };
+
+        return retour;
+    }
+
+    //display units infos on hover
+    $(".show-unit td img").hover(function(){
+        $(this).tooltip({ items: 'img[alt]', content:function(){ return $(this).attr('alt'); }})
+    })
 
 
     var units = {
@@ -147,7 +249,7 @@ window.onload = function(){
             //création des div// attribution nom de classe
             var mainDiv = document.createElement("div");
             mainDiv.className = "unit " + name + " " + i + " margin";
-            $(".unitsDisplay").append(mainDiv);
+            $(".unitsDisplay1").append(mainDiv);
             //création des bgdiv//attribution nom de classe
             var bgDiv = document.createElement("div");
             bgDiv.className = "unitbg " + name + " " + i;
@@ -157,7 +259,7 @@ window.onload = function(){
 
     $(".end-drag").click(function(){
         startGame();
-        if($(".unitsDisplay").is(':empty')){
+        if($(".unitsDisplay1").is(':empty')){
             //startGame();
         }else{
             alert("You still have units to place");
@@ -190,24 +292,81 @@ window.onload = function(){
         })
     }
 
+
+    //everything up has been debugged
     function setMoveByUnit(unit, X, Y){
-        for(i = (X -1); i <= (X + 1); i++){
-            for(j = (Y -1); j <= (Y + 1); j++){
-                $(".pos."+i+"."+j).droppable({
-                    accept: unit,
-                    drop: function(event, ui) {
-                        if($(this).is(":empty")){
-                            $(this).append(ui.draggable);
-                            //reset placement
-                            $(ui.draggable).css("top", 0);
-                            $(ui.draggable).css("left", 0);
-                        }else{
-                            meetUnit(unit, $(this).child().first().attr("class"));
-                        }
-                    }
-                })
+        X = parseInt(X);
+        Y = parseInt(Y);
+        console.log(X);
+        console.log(Y);
+        console.log(unit);
+        console.log("here stop init values");
+        var divname1 = ".pos."+(X - 1).toString()+"."+(Y).toString();
+        var divname2 = ".pos."+(X + 1).toString()+"."+(Y).toString();
+        var divname3 = ".pos."+(X).toString()+"."+(Y - 1).toString();
+        var divname4 = ".pos."+(X).toString()+"."+(Y + 1).toString();
+        console.log(divname1);
+        //Somehow, the X and Y values are inverted
+        var minusX = (X - 1).toString();
+        var plusX = (X + 1).toString();
+        var minusY = (Y - 1).toString();
+        var plusY = (Y + 1).toString();
+        console.log($(divname1).attr("class"));
+        console.log($(divname2).attr("class"));
+        console.log($(divname3).attr("class"));
+        console.log($(divname4).attr("class"));
+        $(".pos."+minusX+"."+(Y)).droppable({
+            accept: unit,
+            drop: function(event, ui) {
+                if($(this).is(":empty")){
+                    $(this).append(ui.draggable);
+                    //reset placement
+                    $(ui.draggable).css("top", 0);
+                    $(ui.draggable).css("left", 0);
+                }else{
+                    meetUnit(unit, $(this).child().first().attr("class"));
+                }
             }
-        }
+        });
+        $(".pos."+plusX+"."+(Y)).droppable({
+            accept: unit,
+            drop: function(event, ui) {
+                if($(this).is(":empty")){
+                    $(this).append(ui.draggable);
+                    //reset placement
+                    $(ui.draggable).css("top", 0);
+                    $(ui.draggable).css("left", 0);
+                }else{
+                    meetUnit(unit, $(this).child().first().attr("class"));
+                }
+            }
+        })
+        $(".pos."+(X)+"."+minusY).droppable({
+            accept: unit,
+            drop: function(event, ui) {
+                if($(this).is(":empty")){
+                    $(this).append(ui.draggable);
+                    //reset placement
+                    $(ui.draggable).css("top", 0);
+                    $(ui.draggable).css("left", 0);
+                }else{
+                    meetUnit(unit, $(this).child().first().attr("class"));
+                }
+            }
+        })
+        $(".pos."+(X)+"."+plusY).droppable({
+            accept: unit,
+            drop: function(event, ui) {
+                if($(this).is(":empty")){
+                    $(this).append(ui.draggable);
+                    //reset placement
+                    $(ui.draggable).css("top", 0);
+                    $(ui.draggable).css("left", 0);
+                }else{
+                    meetUnit(unit, $(this).child().first().attr("class"));
+                }
+            }
+        })
     }
 
     function meetUnit(name1, name2){

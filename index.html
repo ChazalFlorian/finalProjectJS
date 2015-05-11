@@ -1,14 +1,86 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrapper">
-    <div class="unitsDisplay"></div>
-    <div class="board"></div>
-    <button class="end-drag">Fin du placement des troupes</button>
+<div class="header"></div>
+
+<div class="menu">
+    <ul>
+        <li class="item-menu home">Home</li>
+        <li class="item-menu rules">Règles</li>
+        <li class="item-menu contact">Contact</li>
+        <li class="item-menu game">Le jeu!</li>
+    </ul>
 </div>
+
+<div class="central">
+    <!-- Home -->
+    <div class="default">
+        <h1>Bienvenue!</h1>
+        <p> Ce site est dédié au Stratégo, jeu de stratégie plateau opposant 2 adversaires.</p>
+        <br/>
+        <p>Içi, il vous est possible de jouer directement au jeu et d'apprendre les règles. Vous pouvez également me contacter directement pour plus d'informations.</p>
+    </div>
+    <!-- Règles -->
+    <div class="rules">
+        <h1>Règles du jeu</h1>
+        <p>Le stratégo se joue au tour par tour, opposant deux adversaires, ayant chacun 40 pièces.</p>
+        <p>L'objectif est de capturer le drapeau ennemi tout en protégeant le sien</p>
+        <p>Les règles sont simples: chaque unité possède un grade; ces derniers sont classés par ordre de puissance.</p>
+        <table>
+            <tr class="show-unit">
+                <td><img src="assets/scout.jpg" alt="les 8 éclaireurs"></td>
+                <td><img src="assets/deminer.jpg" alt="Les 5 démineurs"></td>
+                <td><img src="assets/sergeant.jpg" alt="les 4 sergents"></td>
+                <td><img src="assets/lieutenant.jpg" alt="les 4 lieutenants"></td>
+                <td><img src="assets/captain.jpg" alt="les 4 capitaines"></td>
+                <td><img src="assets/commander.jpg" alt="les 3 commandants"></td>
+            </tr>
+            <tr class="show-unit">
+                <td><img src="assets/colonel.jpg" alt="les 2 colonels"></td>
+                <td><img src="assets/general.jpg" alt="le géneral"></td>
+                <td><img src="assets/marshall.jpg" alt="Le maréchal"></td>
+                <td><img src="assets/flag.jpg" alt="le drapeau"></td>
+                <td><img src="assets/spy.jpg" alt="l'espion"></td>
+                <td><img src="assets/bomb.jpg" alt="les 6 bombes"></td>
+            </tr>
+        </table>
+        <p>Toutefois, certaines unités ont un comportement particulier:</p>
+        <ol>
+            <li>Les bombes ne peuvent se déplacer, mais prennent toutes les unités attaquantes à l'exception du démineur</li>
+            <li>le maréchal est l'unité la plus puissante du jeu; toutefois, il peut être pris par l'espion si ce dernier effectue l'attaque</li>
+            <li>Toutes les unités se déplace d'une case, a l'exception de l'éclaireur qui n'a pas de limite de déplacement</li>
+            <li>Le drapeau ne peut se déplacer et peut être pris par toutes les unités</li>
+        </ol>
+
+    </div>
+    <!-- Contact -->
+    <div class="contact">
+        <form action="" method="POST" name="form" onsubmit="return checkForm();">
+            <label>Nom: </label><input type="text" name="name">
+            <label>Prénom: </label><input type="text" name="firstname">
+            <label>Mail: </label><input type="text" name="mail">
+            <label>Adresse: </label><input type="text" name="adress">
+            <label>code postal </label><input type="number" name="zipcode">
+            <label>Age: </label><input type="number" name="age">
+            <label>Mot de passe: </label><input type="password" name="password">
+            <label>Vérification du mot de passe: </label><input type="password" name="passwordCheck">
+            <input type="submit">
+        </form>
+        <div id="Warning"></div>
+    </div>
+    <div class="wrapper">
+        <!-- Jeu -->
+        <div class="unitsDisplay1"></div>
+        <div class="board"></div>
+        <div class="unitsDisplay2"></div>
+        <button class="end-drag">Fin du placement des troupes</button>
+    </div>
+</div>
+
 <script type="text/javascript" src="jquery-2.1.3.min.js"></script>
 <script type="text/javascript" src="jquery-ui.min.js"></script>
 <script type="text/javascript" src="script.js"></script>
