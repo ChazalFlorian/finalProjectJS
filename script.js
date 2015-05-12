@@ -109,7 +109,9 @@ window.onload = function(){
         $(this).tooltip({ items: 'img[alt]', content:function(){ return $(this).attr('alt'); }})
     })
 
-
+    //global game's variable
+    var turn = 1;
+    var currentPlayer = 1;
     var units = {
         "unit": [
             {
@@ -149,20 +151,16 @@ window.onload = function(){
                 "value":"8"
             },
             {
-                "name": "scout",
+                "name": "general",
                 "value":"9"
             },
             {
-                "name": "general",
+                "name": "marshall",
                 "value":"10"
             },
             {
-                "name": "marshall",
-                "value":"11"
-            },
-            {
                 "name": "bomb",
-                "value":"12"
+                "value":"11"
             }
         ]
     };
@@ -200,8 +198,9 @@ window.onload = function(){
     function setDropZone(div, posX){
         if(posX >= 6 && posX <= 9){
             $(div).droppable({
-                accept: '.unit',
+                accept: '.unit.P1',
                 drop: function(event, ui) {
+                    //event on drop
                     if($(this).is(":empty")){
                         $(ui.draggable).removeClass("margin");
                         $(ui.draggable).addClass("no-margin");
@@ -212,6 +211,25 @@ window.onload = function(){
                     }else{
                         $(ui.draggable).draggable({
                            revert: true
+                        });
+                    }
+                }
+            });
+        }else if(posX >= 0 && posX <= 3){
+            $(div).droppable({
+                accept: '.unit.P2',
+                drop: function(event, ui) {
+                    //event on drop
+                    if($(this).is(":empty")){
+                        $(ui.draggable).removeClass("margin");
+                        $(ui.draggable).addClass("no-margin");
+                        $(this).append(ui.draggable);
+                        //reset placement
+                        $(ui.draggable).css("top", 0);
+                        $(ui.draggable).css("left", 0);
+                    }else{
+                        $(ui.draggable).draggable({
+                            revert: true
                         });
                     }
                 }
@@ -245,18 +263,22 @@ window.onload = function(){
 
     //géneration des pions
     function initUnit(nb, name){
-        for(i = 0;i < nb; i++){
-            //création des div// attribution nom de classe
-            var mainDiv = document.createElement("div");
-            mainDiv.className = "unit " + name + " " + i + " margin";
-            $(".unitsDisplay1").append(mainDiv);
-            //création des bgdiv//attribution nom de classe
-            var bgDiv = document.createElement("div");
-            bgDiv.className = "unitbg " + name + " " + i;
-            $(mainDiv).append(bgDiv);
+        for(j = 1; j<= 2; j++){
+            for(i = 0;i < nb; i++){
+                //création des div// attribution nom de classe
+                var mainDiv = document.createElement("div");
+                mainDiv.className = "unit P" + j + " " + name + " " + i + " margin";
+                $(".unitsDisplay"+j).append(mainDiv);
+                //création des bgdiv//attribution nom de classe
+                var bgDiv = document.createElement("div");
+                bgDiv.className = "unitbg " + name + " " + i;
+                $(mainDiv).append(bgDiv);
+            }
         }
+
     }
 
+    //press this button to end preparation phase
     $(".end-drag").click(function(){
         startGame();
         if($(".unitsDisplay1").is(':empty')){
@@ -265,6 +287,51 @@ window.onload = function(){
             alert("You still have units to place");
         }
     });
+
+
+    $(".change-turn").click(function(){
+
+        if(turn == 1 && currentPlayer == 1){
+            if($(".unitsDisplay1").is(':empty')){
+                //startGame();
+
+                changeTurn();
+            }else{
+                alert("Il vous reste des unités à placer");
+            }
+        }else if(turn == 2 && currentPlayer == 2){
+            if($(".unitsDisplay2").is(':empty')){
+                startGame();
+                changeTurn();
+            }else{
+                alert("Il vous reste des unités à placer");
+            }
+        }else {
+            changeTurn();
+        }
+
+    });
+
+    function changeTurn(){
+        if(currentPlayer == 1){
+            currentPlayer = 2;
+            $(".unit.P1 .unitbg").css("visibility", "hidden");
+            $(".unit.P2 .unitbg").css("visibility", "visible");
+            $(".unit.P1").draggable({cancel: true});
+            $(".unit.P2").draggable({cancel: false});
+            $(".turn").empty();
+            $(".turn").text("tour du joueur 2");
+        }else{
+            currentPlayer = 1;
+            $(".unit.P2 .unitbg").css("visibility", "hidden");
+            $(".unit.P1 .unitbg").css("visibility", "visible");
+            $(".unit.P2").draggable({cancel: true});
+            $(".unit.P1").draggable({cancel: false});
+            $(".turn").empty();
+            $(".turn").text("tour du joueur 1");
+        }
+        turn += 1;
+    }
 
     function getUnitValueByName(mName) {
         var test;
@@ -303,48 +370,94 @@ window.onload = function(){
             var selectedX = $(this).parent().parent().attr('class').substr(4, 2);
             var selectedY = $(this).parent().parent().attr('class').substr(7, 2);
             var unitName = $(this).parent().attr('class');
+            console.log(selectedX);
+            console.log(selectedY);
+            console.log(unitName);
             setMoveByUnit(unitName, selectedX, selectedY);
         })
     }
 
-
-    //everything up has been debugged
     function setMoveByUnit(unit, X, Y){
-        console.log(X);
-        console.log(Y);
+        //these var are used to set unit's possible movement
         var minusX = X.substr(0, 1) + ( (X.substr(1, 1)) - 1).toString();
         var plusX = X.substr(0, 1) + ( parseInt(X.substr(1, 1)) + 1).toString();
         var minusY = Y.substr(0, 1) + ( (Y.substr(1, 1)) - 1).toString();
         var plusY = Y.substr(0, 1) + ( parseInt(Y.substr(1, 1)) + 1).toString();
-        console.log(minusX);
-        console.log(plusX);
-        console.log(minusY);
-        console.log(plusY);
-        console.log($(".pos."+minusX+"."+Y).attr("class"));
-        $(".pos."+minusX+"."+Y).droppable({
-            disabled: false
-        });
-        console.log($(".pos."+minusX+"."+Y).attr("class"));
-        $(".pos."+plusX+"."+Y).droppable({
-            disabled: false
-        })
-        $(".pos."+X+"."+minusY).droppable({
-            disabled: false
-        })
-        $(".pos."+X+"."+plusY).droppable({
-            disabled: false
-        })
+        //if statements checks if there is a unit on adjacent cases
+        //if so, if it's an ennemy unit, do the meet/fight function
+
+        if($(".pos."+minusX+"."+Y).children().length == 0){
+            $(".pos."+minusX+"."+Y).droppable({
+                disabled: false
+            });
+        }else if($(".pos."+minusX+"."+Y).children().attr("class").substr(6, 1) != currentPlayer){
+            $(".pos."+minusX+"."+Y).droppable({
+                disabled: false,
+                drop: function (event, ui){
+                    meetUnit($(ui.draggable), $(this).children());
+                    $(ui.draggable).draggable({
+                        revert: true
+                    })
+                }
+            });
+        }
+
+        if($(".pos."+plusX+"."+Y).children().length == 0){
+            $(".pos."+plusX+"."+Y).droppable({
+                disabled: false
+            });
+        }else if($(".pos."+plusX+"."+Y).children().attr("class").substr(6, 1) != currentPlayer){
+            $(".pos."+plusX+"."+Y).droppable({
+                disabled: false,
+                drop: function (event, ui){
+                    meetUnit($(ui.draggable), $(this).children());
+                    $(ui.draggable).draggable({
+                        revert: true
+                    })
+                }
+            });
+        }
+
+        if($(".pos."+X+"."+minusY).children().length == 0){
+            $(".pos."+X+"."+minusY).droppable({
+                disabled: false
+            });
+        }else if($(".pos."+X+"."+minusY).children().attr("class").substr(6, 1) != currentPlayer){
+            $(".pos."+X+"."+minusY).droppable({
+                disabled: false,
+                drop: function (event, ui){
+                    meetUnit($(ui.draggable), $(this).children());
+                    $(ui.draggable).draggable({
+                        revert: true
+                    })
+                }
+            });
+        }
+
+        if($(".pos."+X+"."+plusY).children().length == 0){
+            $(".pos."+X+"."+plusY).droppable({
+                disabled: false
+            });
+        }else if($(".pos."+X+"."+plusY).children().attr("class").substr(6, 1) != currentPlayer){
+            $(".pos."+X+"."+plusY).droppable({
+                disabled: false,
+                drop: function (event, ui){
+                    meetUnit($(ui.draggable), $(this).children());
+                    $(ui.draggable).draggable({
+                        revert: true
+                    })
+                }
+            });
+        }
     }
 
     function meetUnit(name1, name2){
         //get name of unit
-        var name1 = name1.split(" ")[1];
-        var name2 = name2.split(" ")[1];
-        console.log(name1);
-        console.log(name2);
+        var nameName1 = name1.attr("class").split(" ")[2];
+        var nameName2 = name2.attr("class").split(" ")[2];
         //get value of unit
-        var value1 = getUnitValueByName(name1);
-        var value2 = getUnitValueByName(name2);
+        var value1 = getUnitValueByName(nameName1);
+        var value2 = getUnitValueByName(nameName2);
         //compare
         //spy always kill marshall if he initiate attack
         if(value1 == 1 && value2 == 11){
@@ -365,7 +478,7 @@ window.onload = function(){
     }
 
     function destroyUnit(unitClass){
-
+        $(unitClass).remove().delay(2000);
     }
 
     function endGame(){

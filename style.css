@@ -142,13 +142,18 @@
     background-image: url("assets/ground.jpg");
 }
 
-.unitsDisplay1{
+.unitsDisplay1, .unitsDisplay2{
     width: 250px;
     height: 630px;
     background-color: aqua;
     margin-right: 20px;
     float: left;
     display: inline-block;
+}
+
+.unitsDisplay2{
+    background-color: #CD3827;
+    float: right;
 }
 
 .show-unit td{
@@ -165,12 +170,17 @@ table tr{
     height: 60px;
 }
 
-.walkable{
+.turn{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 
 }
 
-.noWalkable{
-
+.end-drag{
+    display: block;
+    width: 500px;
 }
 
 .unit{
@@ -178,6 +188,22 @@ table tr{
     height: 50px;
     float: left;
     background-color: black;
+}
+
+.unit.P1{
+    background-color: black;
+}
+
+.unit.P2{
+    background-color: black;
+}
+
+.unit.P1 .unitbg{
+    visibility: visible;
+}
+
+.unit.P2 .unitbg{
+    visibility: hidden;
 }
 
 .margin{
