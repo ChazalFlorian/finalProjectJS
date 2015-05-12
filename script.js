@@ -56,11 +56,11 @@ window.onload = function(){
             retour = true,
             errorMsg = "";
         //check nickname length
-        if (form.elements['nickname'].value.length > 4) {
+        if (form.elements['nickname'].value.length > 0) {
 
         }else{
             retour = false;
-            errorMsg += "Nickname trop court! 4 caractères min.<br>";
+            errorMsg += "Nickname trop court!<br>";
         }
 
         if (form.elements['password'].value.length > 6) {
