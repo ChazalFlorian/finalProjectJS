@@ -46,7 +46,7 @@ window.onload = function(){
         }else{
             $("#Warning").css("visibility", "hidden");
         }
-    })
+    });
 
     //check contact form datas
 
@@ -87,8 +87,8 @@ window.onload = function(){
         for (var i = 4; i < 8; i++) {
             if (form.elements[i].checked == true) {
                 checkRadio = true;
-            };
-        };
+            }
+        }
 
         if (checkRadio == false) {
             retour = false;
@@ -99,7 +99,7 @@ window.onload = function(){
         if (errorMsg.length > 0) {
             document.getElementById('Warning').style.visibility= 'visible';
             document.getElementById('Warning').innerHTML = errorMsg;
-        };
+        }
 
         return retour;
     }
@@ -107,7 +107,7 @@ window.onload = function(){
     //display units infos on hover
     $(".show-unit td img").hover(function(){
         $(this).tooltip({ items: 'img[alt]', content:function(){ return $(this).attr('alt'); }})
-    })
+    });
 
     //global game's variable
     var turn = 1;
@@ -278,17 +278,7 @@ window.onload = function(){
 
     }
 
-    //press this button to end preparation phase
-    $(".end-drag").click(function(){
-        startGame();
-        if($(".unitsDisplay1").is(':empty')){
-            //startGame();
-        }else{
-            alert("You still have units to place");
-        }
-    });
-
-
+    //button will only work on 2 first rounds
     $(".change-turn").click(function(){
 
         if(turn == 1 && currentPlayer == 1){
@@ -303,6 +293,7 @@ window.onload = function(){
             if($(".unitsDisplay2").is(':empty')){
                 startGame();
                 changeTurn();
+                $(".change-turn").css("display", "none");
             }else{
                 alert("Il vous reste des unités à placer");
             }
@@ -315,18 +306,22 @@ window.onload = function(){
     function changeTurn(){
         if(currentPlayer == 1){
             currentPlayer = 2;
+            //hide opponent units
             $(".unit.P1 .unitbg").css("visibility", "hidden");
             $(".unit.P2 .unitbg").css("visibility", "visible");
-            $(".unit.P1").draggable({cancel: true});
-            $(".unit.P2").draggable({cancel: false});
+            //forbid P1 to move P2's units
+            $(".unit.P1").draggable("disable");
+            $(".unit.P2").draggable("enable");
             $(".turn").empty();
             $(".turn").text("tour du joueur 2");
         }else{
             currentPlayer = 1;
+            //hide opponent units
             $(".unit.P2 .unitbg").css("visibility", "hidden");
             $(".unit.P1 .unitbg").css("visibility", "visible");
-            $(".unit.P2").draggable({cancel: true});
-            $(".unit.P1").draggable({cancel: false});
+            ////forbid P2 to move P1's units
+            $(".unit.P2").draggable("disable");
+            $(".unit.P1").draggable("enable");
             $(".turn").empty();
             $(".turn").text("tour du joueur 1");
         }
@@ -349,8 +344,6 @@ window.onload = function(){
             accept: '.unit',
             drop: function(event, ui) {
                 if($(this).is(":empty")){
-                    $(ui.draggable).removeClass("margin");
-                    $(ui.draggable).addClass("no-margin");
                     $(this).append(ui.draggable);
                     //reset placement
                     $(ui.draggable).css("top", 0);
@@ -360,6 +353,7 @@ window.onload = function(){
                         revert: true
                     });
                 }
+                changeTurn();
             }
         });
         //reset drag parameter
@@ -384,71 +378,86 @@ window.onload = function(){
         var minusY = Y.substr(0, 1) + ( (Y.substr(1, 1)) - 1).toString();
         var plusY = Y.substr(0, 1) + ( parseInt(Y.substr(1, 1)) + 1).toString();
         //if statements checks if there is a unit on adjacent cases
-        //if so, if it's an ennemy unit, do the meet/fight function
+        //if so, if it's an ennemy unit, do the meet/fight action on move
+        //if flag or bomb, the unit cannot move
+        if(unit.split(" ")[2] != "bomb" && unit.split(" ")[2] != "flag"){
+            if($(".pos."+minusX+"."+Y).children().length == 0){
+                $(".pos."+minusX+"."+Y).droppable({
+                    disabled: false
+                });
+            }else if($(".pos."+minusX+"."+Y).children().attr("class").substr(6, 1) != currentPlayer){
+                $(".pos."+minusX+"."+Y).droppable({
+                    disabled: false,
+                    drop: function (event, ui){
+                        meetUnit($(ui.draggable), $(this).children());
+                        $(ui.draggable).draggable({
+                            revert: true
+                        });
+                        changeTurn();
+                    }
+                });
+            }
 
-        if($(".pos."+minusX+"."+Y).children().length == 0){
-            $(".pos."+minusX+"."+Y).droppable({
-                disabled: false
-            });
-        }else if($(".pos."+minusX+"."+Y).children().attr("class").substr(6, 1) != currentPlayer){
-            $(".pos."+minusX+"."+Y).droppable({
-                disabled: false,
-                drop: function (event, ui){
-                    meetUnit($(ui.draggable), $(this).children());
-                    $(ui.draggable).draggable({
-                        revert: true
-                    })
-                }
-            });
-        }
+            if($(".pos."+plusX+"."+Y).children().length == 0){
+                $(".pos."+plusX+"."+Y).droppable({
+                    disabled: false
+                });
+            }else if($(".pos."+plusX+"."+Y).children().attr("class").substr(6, 1) != currentPlayer){
+                $(".pos."+plusX+"."+Y).droppable({
+                    disabled: false,
+                    drop: function (event, ui){
+                        meetUnit($(ui.draggable), $(this).children());
+                        $(ui.draggable).draggable({
+                            revert: true
+                        });
+                        changeTurn();
+                    }
+                });
+            }
 
-        if($(".pos."+plusX+"."+Y).children().length == 0){
-            $(".pos."+plusX+"."+Y).droppable({
-                disabled: false
-            });
-        }else if($(".pos."+plusX+"."+Y).children().attr("class").substr(6, 1) != currentPlayer){
-            $(".pos."+plusX+"."+Y).droppable({
-                disabled: false,
-                drop: function (event, ui){
-                    meetUnit($(ui.draggable), $(this).children());
-                    $(ui.draggable).draggable({
-                        revert: true
-                    })
-                }
-            });
-        }
+            if($(".pos."+X+"."+minusY).children().length == 0){
+                $(".pos."+X+"."+minusY).droppable({
+                    disabled: false
+                });
+            }else if($(".pos."+X+"."+minusY).children().attr("class").substr(6, 1) != currentPlayer){
+                $(".pos."+X+"."+minusY).droppable({
+                    disabled: false,
+                    drop: function (event, ui){
+                        meetUnit($(ui.draggable), $(this).children());
+                        $(ui.draggable).draggable({
+                            revert: true
+                        });
+                        changeTurn();
+                    }
+                });
+            }
 
-        if($(".pos."+X+"."+minusY).children().length == 0){
-            $(".pos."+X+"."+minusY).droppable({
-                disabled: false
-            });
-        }else if($(".pos."+X+"."+minusY).children().attr("class").substr(6, 1) != currentPlayer){
-            $(".pos."+X+"."+minusY).droppable({
-                disabled: false,
-                drop: function (event, ui){
-                    meetUnit($(ui.draggable), $(this).children());
-                    $(ui.draggable).draggable({
-                        revert: true
-                    })
-                }
-            });
+            if($(".pos."+X+"."+plusY).children().length == 0){
+                $(".pos."+X+"."+plusY).droppable({
+                    disabled: false
+                });
+            }else if($(".pos."+X+"."+plusY).children().attr("class").substr(6, 1) != currentPlayer){
+                $(".pos."+X+"."+plusY).droppable({
+                    disabled: false,
+                    drop: function (event, ui){
+                        meetUnit($(ui.draggable), $(this).children());
+                        $(ui.draggable).draggable({
+                            revert: true
+                        });
+                        changeTurn();
+                    }
+                });
+            }
         }
-
-        if($(".pos."+X+"."+plusY).children().length == 0){
-            $(".pos."+X+"."+plusY).droppable({
-                disabled: false
-            });
-        }else if($(".pos."+X+"."+plusY).children().attr("class").substr(6, 1) != currentPlayer){
-            $(".pos."+X+"."+plusY).droppable({
-                disabled: false,
-                drop: function (event, ui){
-                    meetUnit($(ui.draggable), $(this).children());
-                    $(ui.draggable).draggable({
-                        revert: true
-                    })
-                }
-            });
-        }
+        //configuring non walkable terrain
+        $(".pos.x4.y2").droppable("disable");
+        $(".pos.x4.y3").droppable("disable");
+        $(".pos.x5.y2").droppable("disable");
+        $(".pos.x5.y3").droppable("disable");
+        $(".pos.x4.y6").droppable("disable");
+        $(".pos.x4.y7").droppable("disable");
+        $(".pos.x5.y6").droppable("disable");
+        $(".pos.x5.y7").droppable("disable");
     }
 
     function meetUnit(name1, name2){
@@ -459,8 +468,11 @@ window.onload = function(){
         var value1 = getUnitValueByName(nameName1);
         var value2 = getUnitValueByName(nameName2);
         //compare
-        //spy always kill marshall if he initiate attack
-        if(value1 == 1 && value2 == 11){
+        //if flag is being attacked, end the Game
+        if(value2 == 0){
+            endGame();
+            //spy always kill marshall if he initiate attack
+        }else if(value1 == 1 && value2 == 11){
             destroyUnit(name2);
         //bomb kills everyone except deminer
         }else if(value2 == 12 && value1 == 3){
@@ -478,10 +490,22 @@ window.onload = function(){
     }
 
     function destroyUnit(unitClass){
-        $(unitClass).remove().delay(2000);
+        sleep(2000);
+        $(unitClass).remove();
     }
 
     function endGame(){
+        alert("Le joueur "+ currentPlayer + "a gagné");
+        $('.unit').css("visibility", "visible");
+        $('.unit').draggable('disable');
+    }
 
+    function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
     }
 };
